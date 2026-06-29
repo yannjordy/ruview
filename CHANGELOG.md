@@ -29,10 +29,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `breathing_indicator.dart` — Animated pulmonary visualization with expand/contract, color lerp, glow, confidence display
   - `signal_particles.dart` — Floating WiFi particle system with sinusoidal drift, glow, alpha oscillation
   - `pose_3d_math.dart` — Full 3D math library: Vec3, Mat4, perspective Projection, SmoothValue spring physics
-- **Mock backend server** — `scripts/mock-server.py` Python stdlib server: 5 rooms simulées, vitals temps réel, stream SSE, calibration, sans aucune dépendance
-- **Docker Compose** — `docker-compose.yml` stack complet : mock-server + flutter-web + mosquitto MQTT
-- **Error states** — Écran hors-ligne avec instructions, bannière d'erreur, bouton réessayer, chargement progressif
-- **Settings persistence** — `SharedPreferences` pour langue, MQTT, sensibilité, mode sombre (conservés entre sessions)
+- **v2/ Rust workspace** — 23 crates / 328 fichiers .rs téléchargés via GH API (contournement du timeout git) :
+  - Core: core, signal, nn, engine, calibration
+  - Serveur: sensing-server, cli, desktop, bfld
+  - Matériel: hardware, vitals, wifiscan
+  - ML: ruvector, mat, occworld-candle, pointcloud
+  - Cogs: cog-pose-estimation, cog-person-count, cog-ha-matter
+  - Autres: nvsim, nvsim-server, rufield, wasm
+  - Workspace: Cargo.toml, rust-toolchain.toml
+- **flutter_rust_bridge** — Pont Rust↔Flutter configuré :
+  - `flutter/rust/` — Cargo.toml, lib.rs, api.rs (calibrate, extract_vitals, detect_presence, process_csi)
+  - `lib/services/rust_bridge.dart` — Bridge Dart avec fallback mock
+  - Dépendances: flutter_rust_bridge, ffigen
+- **Tests widget** — `test/widgets_test.dart` (12 tests) :
+  - VitalsCard (données + vide), RoomCard (online/offline), SensorGrid
+  - BreathingIndicator, SignalParticles, Pose3DRenderer, RoomScene3D
+  - RoomUpdate parsing + toRoom, ApiResult, Theme colors
+- **Notifications push** — `lib/services/notification_service.dart` :
+  - Firebase Cloud Messaging + local notifications
+  - Permissions, topics, foreground/background handlers
+  - Dégradation gracieuse si Firebase non configuré
+- **ESP32 firmware** — 14 fichiers téléchargés :
+  - main.c, csi_task.c, wifi_config.c, tdm.c, channel_hopping.c
+  - nvs_config.c, provision.c, partitions.csv, sdkconfigs
 
 ### Changed
 - **Rebranded to Aetheris** — project renamed from RuView/WiFi-DensePose to Aetheris

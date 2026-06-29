@@ -1,0 +1,27 @@
+[package]
+name = "aetheris_bridge"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.0.0"
+
+# Aetheris v2 crates (path-deps)
+wifi_densepose_core = { path = "../../v2/crates/wifi-densepose-core" }
+wifi_densepose_signal = { path = "../../v2/crates/wifi-densepose-signal" }
+wifi_densepose_nn = { path = "../../v2/crates/wifi-densepose-nn" }
+wifi_densepose_vitals = { path = "../../v2/crates/wifi-densepose-vitals", optional = true }
+wifi_densepose_hardware = { path = "../../v2/crates/wifi-densepose-hardware", optional = true }
+wifi_densepose_calibration = { path = "../../v2/crates/wifi-densepose-calibration", optional = true }
+
+[features]
+default = []
+full = ["wifi_densepose_vitals", "wifi_densepose_hardware", "wifi_densepose_calibration"]
+
+[profile.release]
+lto = true
+opt-level = "z"
+strip = true
