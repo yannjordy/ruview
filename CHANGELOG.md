@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `breathing_indicator.dart` — Animated pulmonary visualization with expand/contract, color lerp, glow, confidence display
   - `signal_particles.dart` — Floating WiFi particle system with sinusoidal drift, glow, alpha oscillation
   - `pose_3d_math.dart` — Full 3D math library: Vec3, Mat4, perspective Projection, SmoothValue spring physics
+- **Mock backend server** — `scripts/mock-server.py` Python stdlib server: 5 rooms simulées, vitals temps réel, stream SSE, calibration, sans aucune dépendance
+- **Docker Compose** — `docker-compose.yml` stack complet : mock-server + flutter-web + mosquitto MQTT
+- **Error states** — Écran hors-ligne avec instructions, bannière d'erreur, bouton réessayer, chargement progressif
+- **Settings persistence** — `SharedPreferences` pour langue, MQTT, sensibilité, mode sombre (conservés entre sessions)
 
 ### Changed
 - **Rebranded to Aetheris** — project renamed from RuView/WiFi-DensePose to Aetheris

@@ -4,56 +4,88 @@ import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../core/constants.dart';
 import '../core/models.dart';
+import '../core/api_types.dart';
 
 class ApiService {
   final http.Client _client = http.Client();
   WebSocketChannel? _channel;
+  Timer? _reconnectTimer;
+  int _reconnectAttempts = 0;
+
   final StreamController<CsiFrame> _csiController =
       StreamController<CsiFrame>.broadcast();
   final StreamController<VitalsReading> _vitalsController =
       StreamController<VitalsReading>.broadcast();
+  final StreamController<ApiError> _errorController =
+      StreamController<ApiError>.broadcast();
 
   Stream<CsiFrame> get csiStream => _csiController.stream;
   Stream<VitalsReading> get vitalsStream => _vitalsController.stream;
+  Stream<ApiError> get errorStream => _errorController.stream;
 
-  Future<List<Room>> getRooms() async {
+  Future<ApiResult<List<RoomUpdate>>> getRooms() async {
     try {
       final res = await _client
           .get(Uri.parse('${AppConstants.apiBaseUrl}/rooms'))
           .timeout(const Duration(seconds: 5));
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as List;
-        return data.map((r) => Room.fromJson(r)).toList();
+        return ApiResult.success(
+            data.map((r) => RoomUpdate.fromJson(r)).toList());
       }
-    } catch (_) {}
-    return [];
+      return ApiResult.failure(
+        res.statusCode == 404 ? ApiError.notFound : ApiError.serverError,
+        message: 'HTTP ${res.statusCode}',
+      );
+    } on TimeoutException {
+      _errorController.add(ApiError.timeout);
+      return ApiResult.failure(ApiError.timeout,
+          message: 'Connexion au serveur trop lente');
+    } catch (e) {
+      _errorController.add(ApiError.network);
+      return ApiResult.failure(ApiError.network,
+          message: 'Impossible de joindre le serveur ($e)');
+    }
   }
 
-  Future<VitalsReading?> getRoomVitals(String roomId) async {
+  Future<ApiResult<VitalsReading>> getRoomVitals(String roomId) async {
     try {
       final res = await _client
           .get(Uri.parse('${AppConstants.apiBaseUrl}/rooms/$roomId/vitals'))
           .timeout(const Duration(seconds: 5));
       if (res.statusCode == 200) {
-        return VitalsReading.fromJson(jsonDecode(res.body));
+        return ApiResult.success(
+            VitalsReading.fromJson(jsonDecode(res.body)));
       }
-    } catch (_) {}
-    return null;
+      return ApiResult.failure(
+        res.statusCode == 503 ? ApiError.offline : ApiError.serverError,
+        message: 'Pièce non disponible',
+      );
+    } on TimeoutException {
+      return ApiResult.failure(ApiError.timeout);
+    } catch (e) {
+      return ApiResult.failure(ApiError.network, message: '$e');
+    }
   }
 
-  Future<CalibrationStatus> startCalibration(String roomId) async {
+  Future<ApiResult<bool>> startCalibration(String roomId) async {
     try {
       final res = await _client
           .post(Uri.parse('${AppConstants.apiBaseUrl}/rooms/$roomId/calibrate'))
-          .timeout(const Duration(seconds: 30));
+          .timeout(const Duration(seconds: 35));
       if (res.statusCode == 200) {
-        return CalibrationStatus(completed: true);
+        return ApiResult.success(true);
       }
-    } catch (_) {}
-    return CalibrationStatus();
+      return ApiResult.failure(ApiError.serverError);
+    } on TimeoutException {
+      return ApiResult.failure(ApiError.timeout,
+          message: 'La calibration prend plus de temps que prévu');
+    } catch (e) {
+      return ApiResult.failure(ApiError.network, message: '$e');
+    }
   }
 
-  Future<bool> setConfig(String key, dynamic value) async {
+  Future<ApiResult<bool>> setConfig(String key, dynamic value) async {
     try {
       final res = await _client
           .put(
@@ -62,16 +94,32 @@ class ApiService {
             body: jsonEncode({key: value}),
           )
           .timeout(const Duration(seconds: 5));
-      return res.statusCode == 200;
-    } catch (_) {
-      return false;
+      return ApiResult.success(res.statusCode == 200);
+    } catch (e) {
+      return ApiResult.failure(ApiError.network, message: '$e');
+    }
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> getConfig() async {
+    try {
+      final res = await _client
+          .get(Uri.parse('${AppConstants.apiBaseUrl}/config'))
+          .timeout(const Duration(seconds: 5));
+      if (res.statusCode == 200) {
+        return ApiResult.success(jsonDecode(res.body) as Map<String, dynamic>);
+      }
+      return ApiResult.failure(ApiError.serverError);
+    } catch (e) {
+      return ApiResult.failure(ApiError.network, message: '$e');
     }
   }
 
   void connectWebSocket() {
+    _reconnectTimer?.cancel();
     try {
       _channel?.sink.close();
       _channel = WebSocketChannel.connect(Uri.parse(AppConstants.wsUrl));
+      _reconnectAttempts = 0;
       _channel!.stream.listen(
         (data) {
           try {
@@ -83,16 +131,32 @@ class ApiService {
             }
           } catch (_) {}
         },
-        onDone: () => Future.delayed(AppConstants.reconnectionDelay, connectWebSocket),
-        onError: (_) => Future.delayed(AppConstants.reconnectionDelay, connectWebSocket),
+        onDone: _scheduleReconnect,
+        onError: (_) => _scheduleReconnect(),
       );
-    } catch (_) {}
+    } catch (_) {
+      _scheduleReconnect();
+    }
+  }
+
+  void _scheduleReconnect() {
+    _errorController.add(ApiError.network);
+    _reconnectAttempts++;
+    final delay = Duration(
+      seconds: (_reconnectAttempts * 2).clamp(1, 30),
+    );
+    _reconnectTimer = Timer(delay, () {
+      _reconnectAttempts = 0;
+      connectWebSocket();
+    });
   }
 
   void dispose() {
+    _reconnectTimer?.cancel();
     _channel?.sink.close();
     _csiController.close();
     _vitalsController.close();
+    _errorController.close();
     _client.close();
   }
 }
