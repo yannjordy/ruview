@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Quick-start guide (FR)** — `docs/demarrage-rapide.fr.md` step-by-step in French
 - **Smart Sleep mode** — `config/smart-sleep.toml` configuration for sleep monitoring, apnea detection, snore detection, bed-exit fall alerts
 - **Pet Detection** — `config/pet-detection.toml` configuration for dog/cat/small pet detection, exclusion zones, inactivity alerts
+- **Flutter app scaffold** — `flutter/` complete Flutter project with:
+  - Dashboard, room detail, calibration, settings screens
+  - Real-time CSI chart (CustomPainter)
+  - Vitals card, room cards, sensor grid widgets
+  - i18n from existing lang files (FR/EN)
+  - WebSocket + REST API services
+  - Dark theme Material Design 3
+  - PWA-ready web manifest
 
 ### Changed
 - **Rebranded to Aetheris** — project renamed from RuView/WiFi-DensePose to Aetheris
