@@ -7,7 +7,7 @@ set -euo pipefail
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_NAME="wifi-densepose"
+PROJECT_NAME="aetheris"
 ENVIRONMENT="${ENVIRONMENT:-production}"
 AWS_REGION="${AWS_REGION:-us-west-2}"
 KUBECONFIG_PATH="${KUBECONFIG_PATH:-~/.kube/config}"

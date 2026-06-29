@@ -1,8 +1,8 @@
-# π RuView
+# π Aetheris
 
 <p align="center">
   <a href="https://cognitum.one/seed">
-    <img src="assets/ruview-seed.png" alt="RuView - WiFi DensePose" width="100%">
+    <img src="assets/ruview-seed.png" alt="Aetheris - WiFi Aetheris" width="100%">
   </a>
 </p>
 <p align="center">
@@ -21,9 +21,9 @@ Fonctionne nativement avec les quatre principaux écosystèmes domotiques : **[H
 
 > Intégrez-vous dans n'importe quelle installation **Home Assistant** avec un simple flag `--mqtt`. Ou appariez-vous dans **Apple Home / Google Home / Alexa / SmartThings** en tant que Matter Bridge. Livre 21 entités par nœud (11 signaux bruts + 10 états sémantiques inférés : quelqu'un-dort, détresse-possible, pièce-active, anomalie-inactivité-personne-âgée, réunion-en-cours, salle-de-bains-occupée, risque-de-chute-élevé, sortie-de-lit, aucun-mouvement, transition-multi-pièces) plus 3 Blueprints HA de démarrage. Voir [`docs/integrations/home-assistant.md`](docs/integrations/home-assistant.md) · [ADR-115](docs/adr/ADR-115-home-assistant-integration.md).
 
-### π RuView est une plateforme de détection WiFi qui transforme les signaux radio en intelligence spatiale.
+### π Aetheris est une plateforme de détection WiFi qui transforme les signaux radio en intelligence spatiale.
 
-Chaque routeur WiFi remplit déjà votre espace d'ondes radio. Quand une personne bouge, respire, ou même reste immobile, elle perturbe ces ondes de manière mesurable. RuView capture ces perturbations en utilisant les « Channel State Information » (CSI) de capteurs ESP32 à faible coût et les transforme en données exploitables : qui est là, ce qu'il fait, et si tout va bien.
+Chaque routeur WiFi remplit déjà votre espace d'ondes radio. Quand une personne bouge, respire, ou même reste immobile, elle perturbe ces ondes de manière mesurable. Aetheris capture ces perturbations en utilisant les « Channel State Information » (CSI) de capteurs ESP32 à faible coût et les transforme en données exploitables : qui est là, ce qu'il fait, et si tout va bien.
 
 **Ce qu'il détecte :**
 - **Présence et occupation** — détecte les personnes à travers les murs, les compte, suit les entrées et sorties
@@ -32,11 +32,11 @@ Chaque routeur WiFi remplit déjà votre espace d'ondes radio. Quand une personn
 - **Cartographie de l'environnement** — l'empreinte RF identifie les pièces, détecte les meubles déplacés, repère les nouveaux objets
 - **Qualité du sommeil** — surveillance nocturne avec classification des stades de sommeil et dépistage de l'apnée
 
-Construit sur [RuVector](https://github.com/ruvnet/ruvector/) et [Cognitum Seed](https://cognitum.one), RuView fonctionne entièrement sur du matériel Edge — un maillage ESP32 (à partir de 9 € par nœud) associé à un Cognitum Seed pour la mémoire persistante, l'attestation cryptographique et l'intégration IA. Pas de cloud, pas de caméra, pas d'accès Internet requis.
+Construit sur [RuVector](https://github.com/ruvnet/ruvector/) et [Cognitum Seed](https://cognitum.one), Aetheris fonctionne entièrement sur du matériel Edge — un maillage ESP32 (à partir de 9 € par nœud) associé à un Cognitum Seed pour la mémoire persistante, l'attestation cryptographique et l'intégration IA. Pas de cloud, pas de caméra, pas d'accès Internet requis.
 
 Le système apprend chaque environnement localement en utilisant des réseaux de neurones impulsionnels qui s'adaptent en moins de 30 secondes, avec un balayage multi-fréquences sur 6 canaux WiFi qui utilise les routeurs de vos voisins comme illuminateurs radar gratuits. Chaque mesure est cryptographiquement attestée via une chaîne de témoins Ed25519.
 
-RuView transforme le WiFi ordinaire en capteur sans contact. Une carte ESP32 à 9 € lit les réflexions radio sur les personnes dans une pièce, et un petit modèle pré-entraîné — publié sur Hugging Face à [`ruvnet/wifi-densepose-pretrained`](https://huggingface.co/ruvnet/wifi-densepose-pretrained) — vous dit qui est là, comment ils respirent et comment évolue leur rythme cardiaque. Le modèle tient dans 8 Ko (quantifié en 4 bits) et s'exécute en microsecondes sur un Raspberry Pi. Pas de caméra, pas de wearable, pas d'application sur le téléphone.
+Aetheris transforme le WiFi ordinaire en capteur sans contact. Une carte ESP32 à 9 € lit les réflexions radio sur les personnes dans une pièce, et un petit modèle pré-entraîné — publié sur Hugging Face à [`ruvnet/wifi-densepose-pretrained`](https://huggingface.co/ruvnet/wifi-densepose-pretrained) — vous dit qui est là, comment ils respirent et comment évolue leur rythme cardiaque. Le modèle tient dans 8 Ko (quantifié en 4 bits) et s'exécute en microsecondes sur un Raspberry Pi. Pas de caméra, pas de wearable, pas d'application sur le téléphone.
 
 ### Conçu pour les applications Edge à faible consommation
 
@@ -44,7 +44,7 @@ Les [modules Edge](#intelligence-edge-adr-041) sont de petits programmes qui s'e
 
 [![Rust 1.85+](https://img.shields.io/badge/rust-1.85+-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/Licence-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests: 1463](https://img.shields.io/badge/tests-1463%20réussis-brightgreen.svg)](https://github.com/ruvnet/RuView)
+[![Tests: 1463](https://img.shields.io/badge/tests-1463%20réussis-brightgreen.svg)](https://github.com/ruvnet/Aetheris)
 [![Docker: multi-arch](https://img.shields.io/badge/docker-amd64%20%2B%20arm64-blue.svg)](https://hub.docker.com/r/ruvnet/wifi-densepose)
 [![Signes Vitaux](https://img.shields.io/badge/signes%20vitaux-respiration%20%2B%20rythme%20cardiaque-red.svg)](#détection-des-signes-vitaux)
 [![Prêt ESP32](https://img.shields.io/badge/ESP32--S3-Flux%20CSI-purple.svg)](#pipeline-matériel-esp32-s3)
@@ -53,7 +53,7 @@ Les [modules Edge](#intelligence-edge-adr-041) sont de petits programmes qui s'e
 
 | Fonction | Méthode | Vitesse / Échelle |
 |----------|---------|-------------------|
-| 🫁 **Respiration** | Passe-bande 0.1–0.5 Hz sur phase enroulée, variance circulaire, BPM passage par zéro ([#593](https://github.com/ruvnet/RuView/issues/593)) | 6–30 BPM, temps réel |
+| 🫁 **Respiration** | Passe-bande 0.1–0.5 Hz sur phase enroulée, variance circulaire, BPM passage par zéro ([#593](https://github.com/ruvnet/Aetheris/issues/593)) | 6–30 BPM, temps réel |
 | 💓 **Rythme cardiaque** | Passe-bande 0.8–2.0 Hz, BPM passage par zéro | 40–120 BPM, temps réel |
 | 👤 **Détection de présence** | Tête entraînée sur Hugging Face ([`ruvnet/wifi-densepose-pretrained`](https://huggingface.co/ruvnet/wifi-densepose-pretrained) ; encodeur v2 = 82.3% précision triplet temporel) + repli variance de phase sans modèle | < 1 ms, ~30 s de calibration |
 | 🧬 **Plongements CSI** | Encodeur contrastif 128-dim sur Hugging Face, variante quantifiée 4-bit tient en 8 Ko | **164 183 plongements/s** sur M4 Pro |
@@ -107,7 +107,7 @@ python archive/v1/data/proof/verify.py
 
 ## 🔬 Comment ça fonctionne
 
-Les routeurs WiFi inondent chaque pièce d'ondes radio. Quand une personne bouge — ou même respire — ces ondes se dispersent différemment. WiFi DensePose lit ce motif de dispersion et reconstruit ce qui s'est passé :
+Les routeurs WiFi inondent chaque pièce d'ondes radio. Quand une personne bouge — ou même respire — ces ondes se dispersent différemment. WiFi Aetheris lit ce motif de dispersion et reconstruit ce qui s'est passé :
 
 ```
 Routeur WiFi → ondes radio traversent la pièce → corps humain → dispersion
@@ -148,4 +148,4 @@ MIT — voir [LICENSE](LICENSE).
 
 ---
 
-*Traduction française du README. Pour toute question, ouvrez un ticket sur [GitHub](https://github.com/ruvnet/RuView/issues).*
+*Traduction française du README. Pour toute question, ouvrez un ticket sur [GitHub](https://github.com/ruvnet/Aetheris/issues).*

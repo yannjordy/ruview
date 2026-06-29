@@ -1,0 +1,57 @@
+# Mode Veille Intelligente — Aetheris Smart Sleep
+#
+# Ce module permet à Aetheris de détecter automatiquement :
+# - L'endormissement et le réveil
+# - Les phases de sommeil (léger, profond, paradoxal)
+# - L'apnée du sommeil et les ronflements
+# - L'agitation nocturne
+# - Les chutes au lever (chez les personnes âgées)
+#
+# Activation : aetheris enable smart-sleep
+
+[enabled]
+default = false
+
+[detection]
+# Seuil de détection d'endormissement (baisse de mouvement + respiration régulière)
+sleep_onset_minutes = 5
+sleep_onset_breathing_stability_threshold = 0.15  # écart-type relatif
+
+# Phases de sommeil
+light_sleep_breathing_range = [12, 20]       # resp/min
+deep_sleep_breathing_range = [6, 12]         # resp/min
+rem_sleep_heart_rate_variability = 0.08      # variabilité HR relative
+
+# Détection d'apnée
+apnea_threshold_seconds = 10                  # pas de respiration > X secondes
+apnea_monitoring_enabled = true
+
+# Ronflement (via microphone ESP32 ou analyse CSI)
+snore_detection_enabled = true
+snore_sensitivity = 0.6                       # 0.0 (peu sensible) à 1.0 (très sensible)
+
+# Agitation nocturne
+restlessness_threshold = 0.4                  # niveau de mouvement abnormal
+restlessness_window_minutes = 15
+
+# Alerte chute au lever
+post_sleep_fall_monitoring_minutes = 5        # surveiller X min après réveil
+bed_exit_detection_enabled = true
+
+[alerts]
+sleep_onset_notification = false
+apnea_alert = true
+restlessness_alert = false
+fall_alert = true
+morning_sleep_report = true                   # rapport de sommeil au réveil
+
+[schedule]
+# Plages horaires de surveillance du sommeil
+auto_detect = true                            # détection automatique
+bedtime_start = "23:00"                       # début de surveillance
+bedtime_end = "08:00"                         # fin de surveillance
+
+[integrations]
+home_assistant = true
+homekit = true
+mqtt_topic = "aetheris/sleep/{room}"

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Chargeur de localisation RuView.
+"""Chargeur de localisation Aetheris.
 
 Usage:
-    from ruview.i18n import t, i18n
+    from aetheris.i18n import t, i18n
 
     # Utilisation
     print(t("sensor.presence"))

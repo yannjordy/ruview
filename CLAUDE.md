@@ -1,8 +1,8 @@
 # Claude Code Configuration — WiFi-DensePose + Claude Flow V3
 
-## Project: wifi-densepose
+## Project: Aetheris (formerly wifi-densepose / RuView)
 
-WiFi-based human pose estimation using Channel State Information (CSI).
+WiFi-based spatial intelligence platform using Channel State Information (CSI).
 Dual codebase: Python v1 (`v1/`) and Rust port (`v2/`).
 ### Key Rust Crates
 | Crate | Description |

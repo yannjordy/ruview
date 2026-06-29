@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "wifi-densepose"
-version = "1.2.0"
-description = "WiFi-based human pose estimation using CSI data and DensePose neural networks"
+name = "aetheris"
+version = "1.3.0"
+description = "Aetheris - WiFi spatial intelligence platform for presence detection, vital signs, and pose estimation"
 readme = "README.md"
 license = "MIT"
 authors = [

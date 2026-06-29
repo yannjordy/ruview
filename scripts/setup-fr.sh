@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Assistant d'installation RuView — Version française
+# Assistant d'installation Aetheris — Version française
 # Usage: bash scripts/setup-fr.sh
 
 set -e
@@ -11,7 +11,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}╔══════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║     π RuView — Assistant d'installation   ║${NC}"
+echo -e "${BLUE}║     π Aetheris — Assistant d'installation   ║${NC}"
 echo -e "${BLUE}║     Détection spatiale par WiFi           ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════════╝${NC}"
 echo ""
@@ -110,6 +110,6 @@ esac
 
 echo ""
 echo -e "${BLUE}╔══════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  Documentation : https://ruvnet.github.io/RuView/ ║${NC}"
-echo -e "${BLUE}║  Support : github.com/ruvnet/RuView/issues ║${NC}"
+echo -e "${BLUE}║  Documentation : https://ruvnet.github.io/Aetheris/ ║${NC}"
+echo -e "${BLUE}║  Support : github.com/ruvnet/Aetheris/issues ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════════╝${NC}"

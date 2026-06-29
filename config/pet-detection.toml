@@ -1,0 +1,63 @@
+# Détection d'Animaux — Aetheris Pet Detection
+#
+# Permet à Aetheris de détecter et suivre les animaux domestiques :
+# - Chiens, chats, lapins, etc.
+# - Différenciation humain vs animal par signature CSI
+# - Suivi des mouvements dans la maison
+# - Détection de comportements anormaux (immobilité prolongée)
+# - Zone d'exclusion (ex : chat pas sur le plan de travail)
+#
+# Activation : aetheris enable pet-detection
+
+[enabled]
+default = false
+
+[detection]
+# Différenciation humain/animal
+# Les animaux ont une signature CSI différente (masse, forme, motifs de mouvement)
+human_vs_pet_classification = true
+
+# Animaux supportés
+detect_dogs = true
+detect_cats = true
+detect_small_pets = true                    # lapins, hamsters, etc.
+
+# Seuils de détection
+pet_mass_threshold_kg = 15                  # masse estimée max pour "animal"
+human_mass_min_kg = 20                      # masse estimée min pour "humain"
+motion_pattern_threshold = 0.65             # similarité avec motifs animaux connus
+pet_height_max_cm = 80                      # hauteur max au sol
+
+# Suivi multi-animaux
+max_pets_tracked = 4                        # nombre max d'animaux suivis
+pet_individual_tracking = true              # suivi individuel (nécessite calibration)
+
+[zones]
+# Zones d'exclusion (ex: plan de travail, berceau)
+exclusion_zones_enabled = true
+exclusion_zones = []                        # format: ["kitchen_counter", "baby_crib"]
+
+# Zones autorisées
+allowed_zones = ["living_room", "kitchen_floor", "bedroom", "hallway"]
+
+[alerts]
+pet_alert_enabled = true
+exclusion_zone_alert = true                # animal dans zone interdite
+prolonged_inactivity_alert = true          # animal immobile > seuil
+prolonged_inactivity_minutes = 120         # seuil d'immobilité
+
+# Notifications
+pet_in_exclusion_zone_notify = true
+pet_inactivity_notify = true
+pet_daily_summary = true                   # résumé quotidien des activités
+
+[schedule]
+# Périodes de surveillance
+24h_monitoring = true                      # surveillance continue
+night_monitoring = true                     # surveillance nocturne
+
+[integrations]
+home_assistant = true
+mqtt_topic = "aetheris/pets/{room}/{pet_id}"
+homekit = false                              # HomeKit ne supporte pas les animaux nativement
+camera_trigger = false                       # déclencher caméra sur détection animal
