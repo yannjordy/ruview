@@ -83,7 +83,6 @@ class _Pose3DRendererState extends State<Pose3DRenderer>
   PoseSkeleton _basePose = PoseSkeleton.standing();
   double _rotY = 0, _rotX = 0.15;
   double _breathPhase = 0;
-  bool _active = true;
 
   @override
   void initState() {
@@ -128,7 +127,7 @@ class _Pose3DRendererState extends State<Pose3DRenderer>
       }
     }
 
-    Future.delayed(const Duration(milliseconds: 2500 + _rng.nextInt(3000)), () {
+    Future.delayed(Duration(milliseconds: 2500 + _rng.nextInt(3000)), () {
       if (mounted) _generateRandomPose();
     });
   }
@@ -278,7 +277,6 @@ class _Pose3DPainter extends CustomPainter {
   }
 
   void _drawParticles(Canvas canvas, Size size, double scale) {
-    final rng = Random(42);
     final particlePaint = Paint()
       ..style = PaintingStyle.fill;
 

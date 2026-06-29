@@ -57,7 +57,7 @@ class _AetherisAppState extends State<AetherisApp> {
       );
     }
 
-    return ChangeNotifierProvider.value(
+    return Provider.value(
       value: _apiService,
       child: MaterialApp(
         title: 'Aetheris',

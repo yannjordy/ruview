@@ -56,14 +56,14 @@ class RustBridge {
     if (_nativeAvailable) {
       // return await api.extractVitals(frameJson);
     }
-    // Mock : génère des vitaux réalistes
-    final br = 15.0 + sin(_rng.nextDouble() * 6.28) * 2.0 + _rng.nextGaussian() * 0.3;
-    final hr = 72 + sin(_rng.nextDouble() * 6.28 + 1) * 5 + _rng.nextGaussian() * 1;
+    // Mock : génère des vitaux réalistes via Box-Muller
+    final br = 15.0 + sin(_rng.nextDouble() * 6.28) * 2.0 + _gauss() * 0.3;
+    final hr = 72 + sin(_rng.nextDouble() * 6.28 + 1) * 5 + _gauss() * 1;
     return BridgeOutput(
       breathingRate: br.clamp(8.0, 30.0),
-      brConfidence: (0.85 + _rng.nextGaussian() * 0.05).clamp(0.3, 0.98),
+      brConfidence: (0.85 + _gauss() * 0.05).clamp(0.3, 0.98),
       heartRate: hr.round().clamp(45, 120),
-      hrConfidence: (0.80 + _rng.nextGaussian() * 0.05).clamp(0.3, 0.98),
+      hrConfidence: (0.80 + _gauss() * 0.05).clamp(0.3, 0.98),
     );
   }
 
@@ -86,12 +86,18 @@ class RustBridge {
     );
   }
 
+  double _gauss() {
+    final u1 = _rng.nextDouble();
+    final u2 = _rng.nextDouble();
+    return sqrt(-2 * log(u1 + 1e-10)) * cos(2 * pi * u2);
+  }
+
   Future<ProcessedCsi> processCsi(List<List<double>> subcarriers) async {
     if (_nativeAvailable) {
       // return await api.processCsi(subcarriers);
     }
     final smoothed = subcarriers
-        .map((row) => row.map((v) => v + _rng.nextGaussian() * 0.01).toList())
+        .map((row) => row.map((v) => v + _gauss() * 0.01).toList())
         .toList();
     final all = smoothed.expand((r) => r);
     final mean = all.isEmpty ? 0.0 : all.reduce((a, b) => a + b) / all.length;

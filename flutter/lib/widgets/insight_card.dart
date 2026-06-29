@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../core/theme.dart';
 import '../services/insight_engine.dart';
 
 class InsightCard extends StatelessWidget {

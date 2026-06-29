@@ -8,8 +8,6 @@ class AppTheme {
   static const _surfaceColor = Color(0xFF1A1A2E);
   static const _backgroundColor = Color(0xFF0F0F23);
   static const _errorColor = Color(0xFFEF5350);
-  static const _successColor = Color(0xFF66BB6A);
-  static const _warningColor = Color(0xFFFFCA28);
 
   static ThemeData get dark => ThemeData(
         useMaterial3: true,
@@ -26,7 +24,7 @@ class AppTheme {
           elevation: 0,
           centerTitle: true,
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: _surfaceColor.withValues(alpha: 0.8),
           elevation: 2,
           shape: RoundedRectangleBorder(

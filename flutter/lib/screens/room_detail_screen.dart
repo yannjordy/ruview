@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/models.dart';
-import '../core/theme.dart';
 import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/csi_chart.dart';
@@ -33,12 +32,14 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
   Future<void> _loadRoom() async {
     final api = context.read<ApiService>();
-    final rooms = await api.getRooms();
+    final roomsResult = await api.getRooms();
+    final rooms = roomsResult.data ?? [];
     final room = rooms.where((r) => r.id == _roomId).firstOrNull;
-    final vitals = await api.getRoomVitals(_roomId);
+    final vitalsResult = await api.getRoomVitals(_roomId);
+    final vitals = vitalsResult.data;
     if (mounted) {
       setState(() {
-        _room = room;
+        _room = room?.toRoom();
         _vitals = vitals;
       });
     }

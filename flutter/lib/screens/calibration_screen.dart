@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../core/api_types.dart';
 import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
-import '../core/constants.dart';
 
 class CalibrationScreen extends StatefulWidget {
   const CalibrationScreen({super.key});

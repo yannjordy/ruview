@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
 import '../core/constants.dart';
-import '../core/theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   final void Function(Locale)? onLocaleChanged;

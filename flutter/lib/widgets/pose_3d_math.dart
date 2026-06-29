@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui' show Offset;
 
 class Vec3 {
   final double x, y, z;
@@ -56,7 +57,8 @@ class Mat4 {
 }
 
 class Projection {
-  final double fov, aspect, near, far;
+  final double fov, near, far;
+  double aspect;
   Projection({this.fov = 60, this.aspect = 1, this.near = 0.1, this.far = 100});
 
   Offset project(Vec3 world, {double rotY = 0, double rotX = 0, double zoom = 1}) {

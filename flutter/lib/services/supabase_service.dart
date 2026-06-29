@@ -177,12 +177,17 @@ class SupabaseService {
     if (isDb) headers['Prefer'] = 'return=minimal';
 
     try {
-      final res = await http
-          .send(http.Request(method, url)
-            ..headers.addAll(headers)
-            ..body = body ?? '')
-          .timeout(const Duration(seconds: 10));
-      return await res.stream.bytesToString();
+      final client = http.Client();
+      try {
+        final req = http.Request(method, url)
+          ..headers.addAll(headers)
+          ..body = body ?? '';
+        final res =
+            await client.send(req).timeout(const Duration(seconds: 10));
+        return await res.stream.bytesToString();
+      } finally {
+        client.close();
+      }
     } catch (e) {
       debugPrint('Supabase: $method $path failed ($e)');
       return null;

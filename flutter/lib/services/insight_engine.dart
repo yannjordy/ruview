@@ -1,7 +1,5 @@
-import 'dart:math';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum InsightSeverity { info, warning, critical }
@@ -62,7 +60,6 @@ class InsightEngine {
 
   final List<Insight> _insights = [];
   final _insightHistory = <Insight>[];
-  final _rng = Random(84);
   double? _lastBr;
   int? _lastHr;
   double _brAccum = 0;
