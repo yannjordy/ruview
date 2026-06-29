@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - WebSocket + REST API services
   - Dark theme Material Design 3
   - PWA-ready web manifest
+- **3D visualization engine** — `flutter/lib/widgets/` new 3D system:
+  - `pose_renderer.dart` — 3D skeleton with perspective projection, spring-animated joints, breathing chest movement, glow effects, smooth pose transitions
+  - `room_scene.dart` — 3D room with floor grid, semi-transparent walls, occupant blobs with breathing pulse animation, depth-based sizing
+  - `breathing_indicator.dart` — Animated pulmonary visualization with expand/contract, color lerp, glow, confidence display
+  - `signal_particles.dart` — Floating WiFi particle system with sinusoidal drift, glow, alpha oscillation
+  - `pose_3d_math.dart` — Full 3D math library: Vec3, Mat4, perspective Projection, SmoothValue spring physics
 
 ### Changed
 - **Rebranded to Aetheris** — project renamed from RuView/WiFi-DensePose to Aetheris

@@ -34,6 +34,17 @@ Plateforme de détection spatiale par WiFi (présence, respiration, rythme cardi
 - `lang/fr.json`, `lang/en.json` — Traductions i18n
 - `python/ruview/i18n.py` — Chargeur i18n Python
 
+### 3D Engine (Flutter)
+- `flutter/lib/widgets/pose_3d_math.dart` — Vec3, Mat4, Projection, SmoothValue spring physics
+- `flutter/lib/widgets/pose_renderer.dart` — Squelette 3D perspective avec COCO 17 keypoints, glow, transitions douces, respiration thoracique
+- `flutter/lib/widgets/room_scene.dart` — Pièce 3D avec sol grille, murs semi-transparents, occupants animés (pulse respiration)
+- `flutter/lib/widgets/breathing_indicator.dart` — Animation pulmonaire avec expansion/contraction, couleur dynamique, glow
+- `flutter/lib/widgets/signal_particles.dart` — Particules WiFi flottantes (dérive sinusoïdale, alpha oscillation)
+- Dashboard + RoomDetail intégrés avec les widgets 3D
+
+### Problème résolu
+- `.gitignore` avait `lib/` qui matchait `flutter/lib/` — ajouté `!flutter/lib/` pour exclure
+
 ## Prochaines étapes
 1. Télécharger v2/ (Rust crates) via gh API (timeout réseau)
 2. Intégrer i18n dans le CLI Rust et le dashboard web
