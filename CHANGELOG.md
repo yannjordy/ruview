@@ -52,6 +52,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ESP32 firmware** — 14 fichiers téléchargés :
   - main.c, csi_task.c, wifi_config.c, tdm.c, channel_hopping.c
   - nvs_config.c, provision.c, partitions.csv, sdkconfigs
+- **Supabase remplace Firebase** — `lib/services/supabase_service.dart` :
+  - Auth (anonyme, email), Realtime (polling), DB (query/insert/upsert)
+  - Push notifications via table `notifications`
+  - Configuration dev locale (localhost:54321)
+- **Moteur IA embarqué** — `lib/services/insight_engine.dart` (sans chat) :
+  - Analyse vitale temps réel (bradycardie, tachypnée, etc.)
+  - Score de risque de chute
+  - Résumé quotidien automatique
+  - Persistence des 200 derniers insights
+- **Service IA optionnel** — `lib/services/ai_service.dart` :
+  - OpenAI / Anthropic / Ollama (local)
+  - Enrichit les titres et descriptions d'insights
+  - Dégradation gracieuse si API non configurée
+- **Cartes insights dashboard** — `lib/widgets/insight_card.dart` :
+  - Icônes par sévérité (info/warning/critical) et catégorie
+  - Bouton dismiss, timestamp relatif
+  - Intégré au dashboard après les vitaux
+- **Crates homecore** — 10 crates téléchargés + Cargo.lock (289 KB)
 
 ### Changed
 - **Rebranded to Aetheris** — project renamed from RuView/WiFi-DensePose to Aetheris

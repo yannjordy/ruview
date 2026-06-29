@@ -7,6 +7,7 @@ import '../core/constants.dart';
 import '../core/theme.dart';
 import '../core/api_types.dart';
 import '../services/api_service.dart';
+import '../services/insight_engine.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/vitals_card.dart';
 import '../widgets/room_card.dart';
@@ -14,6 +15,7 @@ import '../widgets/sensor_grid.dart';
 import '../widgets/pose_renderer.dart';
 import '../widgets/room_scene.dart';
 import '../widgets/signal_particles.dart';
+import '../widgets/insight_card.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -140,6 +142,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 hrConfidence: _globalVitals!.hrConfidence,
               ),
             ),
+          _buildInsightsSection(context),
+          const SizedBox(height: 16),
           Text(l.t('rooms.title'),
               style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
@@ -328,6 +332,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInsightsSection(BuildContext context) {
+    final engine = InsightEngine();
+    final insights = engine.activeInsights;
+
+    if (insights.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.auto_awesome, size: 16, color: Color(0xFF42A5F5)),
+            const SizedBox(width: 6),
+            Text('Insights IA',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: const Color(0xFF42A5F5),
+                    )),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...insights.take(3).map((i) => InsightCard(
+              insight: i,
+              onDismiss: () => engine.dismissInsight(i.id),
+            )),
+      ],
     );
   }
 }
