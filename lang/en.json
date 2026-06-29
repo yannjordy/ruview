@@ -1,0 +1,131 @@
+{
+  "app": {
+    "name": "RuView",
+    "tagline": "WiFi Spatial Intelligence",
+    "description": "Turn your WiFi into a spatial sensing system"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "nodes": "Nodes",
+    "sensing": "Sensing",
+    "settings": "Settings",
+    "logs": "Logs",
+    "edge_modules": "Edge Modules",
+    "mesh_view": "Mesh View"
+  },
+  "sensor": {
+    "presence": "Presence",
+    "breathing": "Breathing",
+    "heart_rate": "Heart Rate",
+    "motion": "Motion",
+    "fall_detection": "Fall Detection",
+    "pose_estimation": "Pose Estimation",
+    "through_wall": "Through Wall",
+    "temperature": "Temperature",
+    "humidity": "Humidity"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "error": "Error",
+    "warning": "Warning",
+    "online": "Online",
+    "offline": "Offline",
+    "calibrating": "Calibrating",
+    "ready": "Ready",
+    "disconnected": "Disconnected"
+  },
+  "units": {
+    "bpm": "bpm",
+    "heart_bpm": "bpm",
+    "celsius": "°C",
+    "percent": "%",
+    "meters": "m",
+    "seconds": "s",
+    "minutes": "min",
+    "hours": "h"
+  },
+  "actions": {
+    "start": "Start",
+    "stop": "Stop",
+    "restart": "Restart",
+    "calibrate": "Calibrate",
+    "configure": "Configure",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "refresh": "Refresh",
+    "download": "Download",
+    "upload": "Upload",
+    "pair": "Pair",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "export": "Export",
+    "import": "Import",
+    "scan": "Scan",
+    "flash": "Flash",
+    "provision": "Provision",
+    "update": "Update",
+    "reset": "Reset"
+  },
+  "alerts": {
+    "fall_detected": "Fall detected in {{room}}",
+    "presence_detected": "Presence detected in {{room}}",
+    "no_movement": "No movement in {{room}} for {{time}}",
+    "abnormal_breathing": "Abnormal breathing detected",
+    "heart_rate_high": "High heart rate: {{value}} bpm",
+    "heart_rate_low": "Low heart rate: {{value}} bpm",
+    "device_offline": "Node {{node}} is offline",
+    "calibration_needed": "Calibration needed for {{room}}",
+    "battery_low": "Low battery on {{node}} ({{percent}}%)",
+    "intrusion": "Intrusion detected in {{zone}}"
+  },
+  "rooms": {
+    "living_room": "Living Room",
+    "bedroom": "Bedroom",
+    "kitchen": "Kitchen",
+    "bathroom": "Bathroom",
+    "office": "Office",
+    "garage": "Garage",
+    "basement": "Basement",
+    "hallway": "Hallway",
+    "dining_room": "Dining Room",
+    "kids_room": "Kids' Room",
+    "guest_room": "Guest Room"
+  },
+  "setup": {
+    "welcome": "Welcome to RuView",
+    "step_1": "1. Plug in your ESP32-S3 via USB",
+    "step_2": "2. Scan for nodes",
+    "step_3": "3. Configure your WiFi network",
+    "step_4": "4. Calibrate the room",
+    "step_5": "5. Start sensing",
+    "no_hardware": "No hardware? Run demo mode:",
+    "demo_mode": "docker run -p 3000:3000 ruvnet/wifi-densepose:latest",
+    "scan_nodes": "Scanning for ESP32 nodes...",
+    "nodes_found": "{{count}} node(s) found",
+    "wifi_config": "WiFi Configuration",
+    "ssid": "WiFi SSID",
+    "password": "Password",
+    "target_ip": "Target IP",
+    "calibrate_room": "Room Calibration",
+    "remain_still": "Remain still for 30 seconds",
+    "calibration_done": "Calibration complete!",
+    "start_sensing": "Start Sensing"
+  },
+  "errors": {
+    "no_hardware": "No ESP32 hardware found",
+    "connection_failed": "Failed to connect to {{node}}",
+    "calibration_failed": "Calibration failed",
+    "permission_denied": "Permission denied",
+    "timeout": "Connection timed out",
+    "unknown": "Unknown error"
+  },
+  "time": {
+    "just_now": "just now",
+    "minutes_ago": "{{n}}m ago",
+    "hours_ago": "{{n}}h ago",
+    "days_ago": "{{n}}d ago"
+  }
+}

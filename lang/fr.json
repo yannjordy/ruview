@@ -1,0 +1,131 @@
+{
+  "app": {
+    "name": "RuView",
+    "tagline": "Détection spatiale par WiFi",
+    "description": "Transformez votre WiFi en système d'intelligence spatiale"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "nodes": "Nœuds",
+    "sensing": "Détection",
+    "settings": "Paramètres",
+    "logs": "Journaux",
+    "edge_modules": "Modules Edge",
+    "mesh_view": "Vue du maillage"
+  },
+  "sensor": {
+    "presence": "Présence",
+    "breathing": "Respiration",
+    "heart_rate": "Rythme cardiaque",
+    "motion": "Mouvement",
+    "fall_detection": "Détection de chute",
+    "pose_estimation": "Estimation de pose",
+    "through_wall": "À travers les murs",
+    "temperature": "Température",
+    "humidity": "Humidité"
+  },
+  "status": {
+    "active": "Actif",
+    "inactive": "Inactif",
+    "error": "Erreur",
+    "warning": "Avertissement",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "calibrating": "Calibration en cours",
+    "ready": "Prêt",
+    "disconnected": "Déconnecté"
+  },
+  "units": {
+    "bpm": "resp/min",
+    "heart_bpm": "bpm",
+    "celsius": "°C",
+    "percent": "%",
+    "meters": "m",
+    "seconds": "s",
+    "minutes": "min",
+    "hours": "h"
+  },
+  "actions": {
+    "start": "Démarrer",
+    "stop": "Arrêter",
+    "restart": "Redémarrer",
+    "calibrate": "Calibrer",
+    "configure": "Configurer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "refresh": "Actualiser",
+    "download": "Télécharger",
+    "upload": "Importer",
+    "pair": "Appairer",
+    "connect": "Connecter",
+    "disconnect": "Déconnecter",
+    "export": "Exporter",
+    "import": "Importer",
+    "scan": "Analyser",
+    "flash": "Flasher",
+    "provision": "Provisionner",
+    "update": "Mettre à jour",
+    "reset": "Réinitialiser"
+  },
+  "alerts": {
+    "fall_detected": "Chute détectée dans {{room}}",
+    "presence_detected": "Présence détectée dans {{room}}",
+    "no_movement": "Aucun mouvement détecté dans {{room}} depuis {{time}}",
+    "abnormal_breathing": "Respiration anormale détectée",
+    "heart_rate_high": "Rythme cardiaque élevé : {{value}} bpm",
+    "heart_rate_low": "Rythme cardiaque faible : {{value}} bpm",
+    "device_offline": "Nœud {{node}} hors ligne",
+    "calibration_needed": "Calibration requise pour {{room}}",
+    "battery_low": "Batterie faible sur {{node}} ({{percent}}%)",
+    "intrusion": "Intrusion détectée dans {{zone}}"
+  },
+  "rooms": {
+    "living_room": "Salon",
+    "bedroom": "Chambre",
+    "kitchen": "Cuisine",
+    "bathroom": "Salle de bains",
+    "office": "Bureau",
+    "garage": "Garage",
+    "basement": "Sous-sol",
+    "hallway": "Couloir",
+    "dining_room": "Salle à manger",
+    "kids_room": "Chambre d'enfant",
+    "guest_room": "Chambre d'amis"
+  },
+  "setup": {
+    "welcome": "Bienvenue dans RuView",
+    "step_1": "1. Branchez votre ESP32-S3 sur un port USB",
+    "step_2": "2. Lancez l'analyse des nœuds",
+    "step_3": "3. Configurez votre réseau WiFi",
+    "step_4": "4. Calibrez la pièce",
+    "step_5": "5. Commencez la détection",
+    "no_hardware": "Vous n'avez pas de matériel ? Lancez le mode démo :",
+    "demo_mode": "docker run -p 3000:3000 ruvnet/wifi-densepose:latest",
+    "scan_nodes": "Analyse des nœuds ESP32...",
+    "nodes_found": "{{count}} nœud(s) trouvé(s)",
+    "wifi_config": "Configuration WiFi",
+    "ssid": "Nom du réseau WiFi (SSID)",
+    "password": "Mot de passe",
+    "target_ip": "Adresse IP cible",
+    "calibrate_room": "Calibrage de la pièce",
+    "remain_still": "Restez immobile pendant 30 secondes",
+    "calibration_done": "Calibration terminée !",
+    "start_sensing": "Démarrer la détection"
+  },
+  "errors": {
+    "no_hardware": "Aucun matériel ESP32 trouvé",
+    "connection_failed": "Échec de connexion au nœud {{node}}",
+    "calibration_failed": "Échec de la calibration",
+    "permission_denied": "Permission refusée",
+    "timeout": "La connexion a expiré",
+    "unknown": "Erreur inconnue"
+  },
+  "time": {
+    "just_now": "à l'instant",
+    "minutes_ago": "il y a {{n}} min",
+    "hours_ago": "il y a {{n}} h",
+    "days_ago": "il y a {{n}} j"
+  }
+}

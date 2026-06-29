@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **French translation** — `README.fr.md` for French-speaking users
+- **i18n system** — `lang/fr.json` and `lang/en.json` for UI/CLI localization, with Python loader `python/ruview/i18n.py`
+- **French setup assistant** — `scripts/setup-fr.sh` interactive installer in French
+- **Performance optimization guide** — `docs/optimisation-performances.fr.md` with concrete benchmarks and tuning recommendations
+
 ### Fixed
 - **Multistatic fusion never ran on a mixed-mode ESP32 mesh — live bridge fed raw, un-canonicalized per-node CSI to the fuser (#1170).** `node_frame_from_state` (`multistatic_bridge.rs`) wrapped each node's **raw** amplitude vector (HT20 ≈ 64 bins, HT40 ≈ 128/192) into a struct *named* `CanonicalCsiFrame` without ever resampling, so `MultistaticFuser::fuse` tripped `DimensionMismatch` on every cycle, silently fell back to per-node sum/dedup, and spun `total_engine_errors` unbounded. Added `HardwareNormalizer::resample_to_canonical` (resample-only, **no z-score** — preserves the amplitude scale the person-score's `variance/mean²` relies on) and run every node frame through it onto the canonical 56-tone grid before fusion. Heterogeneous meshes now fuse instead of erroring. Pinned by `heterogeneous_node_counts_canonicalize_and_fuse` (mixed 64/192 → fuses), `resample_to_canonical_is_length_only_no_zscore`, and an updated `test_node_frame_conversion`; the pre-existing `engine_bridge::observe_cycle_counts_engine_errors` was retargeted to force a `TimestampMismatch` (its old 56-vs-30 setup now canonicalizes cleanly). `wifi-densepose-signal` 501 / `wifi-densepose-sensing-server` 677 tests, 0 failed.
 - **`csi_fps_ema` reported the CSI frame rate 40–840× too high under bursty UDP delivery (#1180).** `update_csi_fps_ema` only rejected deltas `≤ 0` or `≥ 1 s`, so a 36 µs intra-burst arrival delta yielded `1/dt ≈ 27 kHz` straight into the EMA — the metric measured server arrival jitter, not the node's ~40 fps production rate. Added a `MIN_PLAUSIBLE_CSI_DT_SEC = 0.005` floor (derived from the firmware's 50 fps `CSI_MIN_SEND_INTERVAL_US` ceiling, ×4 slack) and made `observe_csi_frame_arrival` keep its anchor across sub-floor bursts so the next genuine inter-frame gap measures true cadence. Pinned by `subms_burst_delta_rejected`, `burst_interleaved_with_nominal_stays_in_band`, and `observe_csi_frame_arrival_ignores_subms_bursts`.
