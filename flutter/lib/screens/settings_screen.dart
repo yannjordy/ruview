@@ -17,8 +17,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _darkMode = true;
   String _language = 'fr';
-  bool _mqttEnabled = true;
-  bool _homeAssistantEnabled = true;
   double _sensitivity = 0.7;
   bool _recordingEnabled = false;
   bool _loading = true;
@@ -36,8 +34,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _darkMode = prefs.getBool('dark_mode') ?? true;
       _language = prefs.getString('language') ?? 'fr';
-      _mqttEnabled = prefs.getBool('mqtt_enabled') ?? true;
-      _homeAssistantEnabled = prefs.getBool('ha_enabled') ?? true;
       _sensitivity = prefs.getDouble('sensitivity') ?? 0.7;
       _recordingEnabled = prefs.getBool('recording_enabled') ?? false;
       _loading = false;
@@ -117,26 +113,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const Divider(),
-          _buildSection(l.t('settings.integrations')),
-          SwitchListTile(
-            title: Text(l.t('settings.mqtt')),
-            subtitle: Text('${AppConstants.mqttBroker}:${AppConstants.mqttPort}'),
-            value: _mqttEnabled,
-            onChanged: (v) {
-              setState(() => _mqttEnabled = v);
-              _saveSetting('mqtt_enabled', v);
-            },
-          ),
-          SwitchListTile(
-            title: const Text('Home Assistant'),
-            subtitle: Text(l.t('settings.home_assistant_desc')),
-            value: _homeAssistantEnabled,
-            onChanged: (v) {
-              setState(() => _homeAssistantEnabled = v);
-              _saveSetting('ha_enabled', v);
-            },
-          ),
-          const Divider(),
           _buildSection(l.t('settings.detection')),
           ListTile(
             title: Text(l.t('settings.sensitivity')),
@@ -165,22 +141,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: const Text('Aetheris'),
             subtitle: Text('${l.t('settings.version')} ${AppConstants.version}'),
           ),
-          ListTile(
-            leading: const Icon(Icons.info_outline, color: Colors.white38),
-            title: const Text('Serveur'),
-            subtitle: Text(AppConstants.apiBaseUrl,
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
-          ),
           const SizedBox(height: 32),
-          Center(
-            child: Text(
-              'Démarrez le serveur : python scripts/mock-server.py',
-              style: TextStyle(
-                  color: const Color(0xFF00BCD4).withValues(alpha: 0.6),
-                  fontSize: 11,
-                  fontFamily: 'monospace'),
-            ),
-          ),
         ],
       ),
     );

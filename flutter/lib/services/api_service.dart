@@ -1,16 +1,17 @@
-import 'dart:convert';
+import 'dart:math';
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'package:web_socket_channel/web_socket_channel.dart';
-import '../core/constants.dart';
 import '../core/models.dart';
 import '../core/api_types.dart';
 
 class ApiService {
-  final http.Client _client = http.Client();
-  WebSocketChannel? _channel;
-  Timer? _reconnectTimer;
-  int _reconnectAttempts = 0;
+  Timer? _dataTimer;
+  Timer? _calibTimer;
+  int _calibProgress = 0;
+  bool _calibrating = false;
+
+  final _rng = Random(42);
+  final _rooms = <String, _SimRoom>{};
+  double _globalPhase = 0;
 
   final StreamController<CsiFrame> _csiController =
       StreamController<CsiFrame>.broadcast();
@@ -23,140 +24,146 @@ class ApiService {
   Stream<VitalsReading> get vitalsStream => _vitalsController.stream;
   Stream<ApiError> get errorStream => _errorController.stream;
 
-  Future<ApiResult<List<RoomUpdate>>> getRooms() async {
-    try {
-      final res = await _client
-          .get(Uri.parse('${AppConstants.apiBaseUrl}/rooms'))
-          .timeout(const Duration(seconds: 5));
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as List;
-        return ApiResult.success(
-            data.map((r) => RoomUpdate.fromJson(r)).toList());
-      }
-      return ApiResult.failure(
-        res.statusCode == 404 ? ApiError.notFound : ApiError.serverError,
-        message: 'HTTP ${res.statusCode}',
-      );
-    } on TimeoutException {
-      _errorController.add(ApiError.timeout);
-      return ApiResult.failure(ApiError.timeout,
-          message: 'Connexion au serveur trop lente');
-    } catch (e) {
-      _errorController.add(ApiError.network);
-      return ApiResult.failure(ApiError.network,
-          message: 'Impossible de joindre le serveur ($e)');
-    }
+  ApiService() {
+    _rooms['salon'] = _SimRoom(name: 'Salon', occCount: 2);
+    _rooms['chambre'] = _SimRoom(name: 'Chambre', occCount: 1);
+    _rooms['bureau'] = _SimRoom(name: 'Bureau', occCount: 0);
+    _rooms['cuisine'] = _SimRoom(name: 'Cuisine', occCount: 1);
+    _rooms['garage'] = _SimRoom(name: 'Garage', occCount: 0);
+    _startDataGeneration();
   }
 
-  Future<ApiResult<VitalsReading>> getRoomVitals(String roomId) async {
-    try {
-      final res = await _client
-          .get(Uri.parse('${AppConstants.apiBaseUrl}/rooms/$roomId/vitals'))
-          .timeout(const Duration(seconds: 5));
-      if (res.statusCode == 200) {
-        return ApiResult.success(
-            VitalsReading.fromJson(jsonDecode(res.body)));
-      }
-      return ApiResult.failure(
-        res.statusCode == 503 ? ApiError.offline : ApiError.serverError,
-        message: 'Pièce non disponible',
-      );
-    } on TimeoutException {
-      return ApiResult.failure(ApiError.timeout);
-    } catch (e) {
-      return ApiResult.failure(ApiError.network, message: '$e');
-    }
-  }
-
-  Future<ApiResult<bool>> startCalibration(String roomId) async {
-    try {
-      final res = await _client
-          .post(Uri.parse('${AppConstants.apiBaseUrl}/rooms/$roomId/calibrate'))
-          .timeout(const Duration(seconds: 35));
-      if (res.statusCode == 200) {
-        return ApiResult.success(true);
-      }
-      return ApiResult.failure(ApiError.serverError);
-    } on TimeoutException {
-      return ApiResult.failure(ApiError.timeout,
-          message: 'La calibration prend plus de temps que prévu');
-    } catch (e) {
-      return ApiResult.failure(ApiError.network, message: '$e');
-    }
-  }
-
-  Future<ApiResult<bool>> setConfig(String key, dynamic value) async {
-    try {
-      final res = await _client
-          .put(
-            Uri.parse('${AppConstants.apiBaseUrl}/config'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({key: value}),
-          )
-          .timeout(const Duration(seconds: 5));
-      return ApiResult.success(res.statusCode == 200);
-    } catch (e) {
-      return ApiResult.failure(ApiError.network, message: '$e');
-    }
-  }
-
-  Future<ApiResult<Map<String, dynamic>>> getConfig() async {
-    try {
-      final res = await _client
-          .get(Uri.parse('${AppConstants.apiBaseUrl}/config'))
-          .timeout(const Duration(seconds: 5));
-      if (res.statusCode == 200) {
-        return ApiResult.success(jsonDecode(res.body) as Map<String, dynamic>);
-      }
-      return ApiResult.failure(ApiError.serverError);
-    } catch (e) {
-      return ApiResult.failure(ApiError.network, message: '$e');
-    }
-  }
-
-  void connectWebSocket() {
-    _reconnectTimer?.cancel();
-    try {
-      _channel?.sink.close();
-      _channel = WebSocketChannel.connect(Uri.parse(AppConstants.wsUrl));
-      _reconnectAttempts = 0;
-      _channel!.stream.listen(
-        (data) {
-          try {
-            final json = jsonDecode(data as String);
-            if (json['type'] == 'csi') {
-              _csiController.add(CsiFrame.fromJson(json['data']));
-            } else if (json['type'] == 'vitals') {
-              _vitalsController.add(VitalsReading.fromJson(json['data']));
-            }
-          } catch (_) {}
-        },
-        onDone: _scheduleReconnect,
-        onError: (_) => _scheduleReconnect(),
-      );
-    } catch (_) {
-      _scheduleReconnect();
-    }
-  }
-
-  void _scheduleReconnect() {
-    _errorController.add(ApiError.network);
-    _reconnectAttempts++;
-    final delay = Duration(
-      seconds: (_reconnectAttempts * 2).clamp(1, 30),
-    );
-    _reconnectTimer = Timer(delay, () {
-      _reconnectAttempts = 0;
-      connectWebSocket();
+  void _startDataGeneration() {
+    _dataTimer = Timer.periodic(const Duration(milliseconds: 800), (_) {
+      _globalPhase += 0.15;
+      _generateVitals();
+      _generateCsi();
     });
   }
 
+  void _generateVitals() {
+    for (final entry in _rooms.entries) {
+      final room = entry.value;
+      final baseBr = room.baseBreathingRate;
+      final baseHr = room.baseHeartRate;
+      final variation = sin(_globalPhase * room.phaseOffset);
+
+      room.currentVitals = VitalsReading(
+        breathingRate: baseBr + variation * 1.5 + _rng.nextDouble() * 0.3,
+        heartRate: (baseHr + variation * 4 + _rng.nextDouble() * 2).round(),
+        brConfidence: (0.8 + sin(_globalPhase * 0.5 + room.phaseOffset) * 0.1)
+            .clamp(0.4, 0.95),
+        hrConfidence: (0.75 + cos(_globalPhase * 0.3 + room.phaseOffset) * 0.1)
+            .clamp(0.4, 0.95),
+      );
+
+      _vitalsController.add(room.currentVitals!);
+    }
+  }
+
+  void _generateCsi() {
+    final subcarriers = List.generate(3, (_) =>
+        List.generate(64, (i) =>
+            50 + sin(_globalPhase + i * 0.1) * 20 +
+            _rng.nextDouble() * 5));
+    _csiController.add(CsiFrame(
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+      amplitudes: subcarriers,
+      phases: subcarriers.map((s) =>
+          s.map((v) => sin(v * 0.1) * pi).toList()).toList(),
+    ));
+  }
+
+  Future<ApiResult<List<RoomUpdate>>> getRooms() async {
+    final list = _rooms.entries.map((e) {
+      final r = e.value;
+      final hasOcc = r.occCount > 0;
+      return RoomUpdate(
+        id: e.key,
+        name: r.name,
+        status: hasOcc ? DeviceStatus.online : DeviceStatus.offline,
+        occupantCount: r.currentVitals != null
+            ? (r.occCount + sin(_globalPhase * 0.2 + r.phaseOffset) * 0.3).round().clamp(0, 5)
+            : 0,
+        breathingRate: r.currentVitals?.breathingRate,
+        heartRate: r.currentVitals?.heartRate,
+        lastUpdated: DateTime.now().millisecondsSinceEpoch,
+      );
+    }).toList();
+    return ApiResult.success(list);
+  }
+
+  Future<ApiResult<VitalsReading>> getRoomVitals(String roomId) async {
+    final room = _rooms[roomId];
+    if (room?.currentVitals != null) {
+      return ApiResult.success(room!.currentVitals!);
+    }
+    if (_rooms.isNotEmpty) {
+      final first = _rooms.values.first;
+      return ApiResult.success(
+        VitalsReading(
+          breathingRate: first.baseBreathingRate,
+          heartRate: first.baseHeartRate.round(),
+          brConfidence: 0.7,
+          hrConfidence: 0.7,
+        ),
+      );
+    }
+    return ApiResult.failure(ApiError.notFound, message: 'Aucune pièce');
+  }
+
+  Future<ApiResult<bool>> startCalibration(String roomId) async {
+    if (_calibrating) {
+      return ApiResult.failure(ApiError.serverError,
+          message: 'Calibration déjà en cours');
+    }
+    _calibrating = true;
+    _calibProgress = 0;
+    _calibTimer = Timer.periodic(const Duration(milliseconds: 300), (t) {
+      _calibProgress = (_calibProgress + 5).clamp(0, 100);
+      if (_calibProgress >= 100) {
+        t.cancel();
+        _calibrating = false;
+      }
+    });
+    await Future.delayed(const Duration(seconds: 6));
+    return ApiResult.success(true);
+  }
+
+  int getCalibrationProgress() => _calibProgress;
+  bool get isCalibrating => _calibrating;
+
+  Future<ApiResult<bool>> setConfig(String key, dynamic value) async {
+    return ApiResult.success(true);
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> getConfig() async {
+    return ApiResult.success({'mode': 'local', 'sensitivity': 0.7});
+  }
+
+  void connectWebSocket() {}
+
   void dispose() {
-    _reconnectTimer?.cancel();
-    _channel?.sink.close();
+    _dataTimer?.cancel();
+    _calibTimer?.cancel();
     _csiController.close();
     _vitalsController.close();
     _errorController.close();
-    _client.close();
   }
+}
+
+class _SimRoom {
+  final String name;
+  final int occCount;
+  final double phaseOffset;
+  final double baseBreathingRate;
+  final double baseHeartRate;
+  VitalsReading? currentVitals;
+
+  _SimRoom({
+    required this.name,
+    this.occCount = 0,
+    this.baseBreathingRate = 16,
+    this.baseHeartRate = 72,
+  }) : phaseOffset = Random().nextDouble() * 6.28;
 }
